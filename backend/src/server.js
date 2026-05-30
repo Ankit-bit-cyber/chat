@@ -13,8 +13,31 @@ const __dirname = path.resolve();
 
 const PORT = ENV.PORT || 3000;
 
+// CORS configuration that handles multiple origins
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like curl, Postman, or mobile apps)
+    if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+      ENV.CLIENT_URL?.replace(/\/$/, ""), // Remove trailing slash if present
+      "https://chat-7ypx.vercel.app",
+      "https://chat-7ypx-5u43dqktx-ankit-kumars-projects-5420a0c1.vercel.app",
+      "http://localhost:5173", // Vite dev server
+      "http://localhost:3000", // Local development
+    ].filter(Boolean);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
 app.use(express.json({ limit: "5mb" })); // req.body
-app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 
