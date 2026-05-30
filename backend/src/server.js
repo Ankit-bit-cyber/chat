@@ -48,6 +48,23 @@ app.get("/api", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+  const statusCode = err.status || err.statusCode || 500;
+  const message = err.message || "Internal server error";
+  
+  res.status(statusCode).json({
+    message,
+    ...(process.env.NODE_ENV === "development" && { error: err.stack }),
+  });
+});
+
 // make ready for deployment
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
@@ -57,7 +74,13 @@ if (ENV.NODE_ENV === "production") {
   });
 }
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log("Server running on port: " + PORT);
-  connectDB();
+  try {
+    await connectDB();
+    console.log("Database connected successfully");
+  } catch (error) {
+    console.error("Failed to connect to database:", error);
+    process.exit(1);
+  }
 });

@@ -9,7 +9,13 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [ENV.CLIENT_URL],
+    origin: [
+      ENV.CLIENT_URL?.replace(/\/$/, ""),
+      "https://chat-7ypx.vercel.app",
+      "https://chat-7ypx-5u43dqktx-ankit-kumars-projects-5420a0c1.vercel.app",
+      "http://localhost:5173",
+      "http://localhost:3000",
+    ].filter(Boolean),
     credentials: true,
   },
 });
