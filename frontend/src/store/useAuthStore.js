@@ -4,8 +4,9 @@ import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
 const BASE_URL = import.meta.env.VITE_SOCKET_URL || 
-  (import.meta.env.MODE === "development" ? "http://localhost:3000" : "https://chat-49y9.vercel.app");
-
+  (import.meta.env.MODE === "development" 
+    ? "http://localhost:3000" 
+    : "https://chat-production-d9a2.up.railway.app");
 export const useAuthStore = create((set, get) => ({
   authUser: null,
   isCheckingAuth: true,
